@@ -49,6 +49,26 @@
     </dependency>
 
     <dependency>
+      <groupId>com.jfinal</groupId>
+      <artifactId>jfinal-weixin</artifactId>
+      <version>2.4</version>
+    </dependency>
+
+    <!--微信依赖jar包-->
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>fastjson</artifactId>
+      <version>1.2.59</version>
+    </dependency>
+
+    <!--JFinal-weixin-1.8添加对okHttp3的支持-->
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>okhttp</artifactId>
+      <version>3.2.0</version>
+    </dependency>
+
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.11</version>
@@ -58,47 +78,74 @@
 
   <build>
     <finalName>wx</finalName>
-    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
-      <plugins>
-        <plugin>
-          <artifactId>maven-clean-plugin</artifactId>
-          <version>3.1.0</version>
-        </plugin>
-        <!-- see http://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_war_packaging -->
-        <plugin>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>3.0.2</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.6.1</version>
-          <configuration>
-            <source>1.8</source>
-            <target>1.8</target>
-            <encoding>UTF-8</encoding>
-            <!-- java8 保留参数名编译参数 -->
-            <compilerArgument>-parameters</compilerArgument>
-            <compilerArguments><verbose /></compilerArguments>
-          </configuration>
-        </plugin>
-        <plugin>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.22.1</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-war-plugin</artifactId>
-          <version>3.2.2</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-install-plugin</artifactId>
-          <version>2.5.2</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.2</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.6.1</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+          <encoding>UTF-8</encoding>
+          <!-- java8 保留参数名编译参数 -->
+          <compilerArgument>-parameters</compilerArgument>
+          <compilerArguments><verbose /></compilerArguments>
+        </configuration>
+      </plugin>
+
+      <!--
+          jar 包中的配置文件优先级高于 config 目录下的 "同名文件"
+          因此，打包时需要排除掉 jar 包中来自 src/main/resources 目录的
+          配置文件，否则部署时 config 目录中的同名配置文件不会生效
+       -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <excludes>
+            <exclude>*.txt</exclude>
+            <exclude>*.xml</exclude>
+            <exclude>*.properties</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
+      <!--
+          使用 mvn clean package 打包
+          更多配置可参考官司方文档：http://maven.apache.org/plugins/maven-assembly-plugin/single-mojo.html
+       -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+
+            <configuration>
+              <!-- 打包生成的文件名 -->
+              <finalName>${project.artifactId}</finalName>
+              <!-- jar 等压缩文件在被打包进入 zip、tar.gz 时是否压缩，设置为 false 可加快打包速度 -->
+              <recompressZippedFiles>false</recompressZippedFiles>
+              <!-- 打包生成的文件是否要追加 package.xml 中定义的 id 值 -->
+              <appendAssemblyId>true</appendAssemblyId>
+              <!-- 指向打包描述文件 package.xml -->
+              <descriptors>
+                <descriptor>package.xml</descriptor>
+              </descriptors>
+              <!-- 打包结果输出的基础目录 -->
+              <outputDirectory>${project.build.directory}/</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
   </build>
 </project>
