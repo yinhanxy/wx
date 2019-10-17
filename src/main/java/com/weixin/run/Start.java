@@ -16,6 +16,6 @@ public class Start {
      *      启动入口类放置用于启动的 main 方法
      */
     public static void main(String[] args) {
-        UndertowServer.start(WXConfig.class, 80, true);
+        UndertowServer.start(WXConfig.class);
     }
 }

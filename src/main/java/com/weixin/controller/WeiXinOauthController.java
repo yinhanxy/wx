@@ -78,7 +78,7 @@ public class WeiXinOauthController extends ApiController {
                 if (state.equals("2222")) {
                     redirect("http://www.cnblogs.com/zyw-205520/");
                 }else {
-                    redirect("/login");
+                    redirect("/index");
                 }
             }
 
