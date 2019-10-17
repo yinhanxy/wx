@@ -2,14 +2,18 @@ package com.weixin.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.jfinal.core.JFinal;
 import com.jfinal.kit.JsonKit;
 import com.jfinal.kit.PropKit;
+import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
 import com.jfinal.weixin.sdk.api.*;
 import com.jfinal.weixin.sdk.jfinal.ApiController;
 import com.jfinal.weixin.sdk.msg.out.OutTextMsg;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * Created by yinh on 2019/10/17
@@ -22,7 +26,11 @@ public class WeiXinOauthController extends ApiController {
         String secret=ApiConfigKit.getApiConfig().getAppSecret();
         String redirect_uri = getBaseUrl(getRequest())
                 + "/oauth/callback";
-
+        try {
+            redirect_uri = URLEncoder.encode(redirect_uri, JFinal.me().getConstants().getEncoding());
+        } catch (UnsupportedEncodingException e) {
+            log.error("urlDecode is error", e);
+        }
         String authorizeURL = SnsAccessTokenApi.getAuthorizeURL(appId, redirect_uri, false);
         redirect(authorizeURL);
     }
