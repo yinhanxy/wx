@@ -4,12 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.JFinal;
 import com.jfinal.kit.JsonKit;
-import com.jfinal.kit.PropKit;
-import com.jfinal.kit.StrKit;
+
 import com.jfinal.log.Log;
 import com.jfinal.weixin.sdk.api.*;
 import com.jfinal.weixin.sdk.jfinal.ApiController;
-import com.jfinal.weixin.sdk.msg.out.OutTextMsg;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -23,7 +21,6 @@ public class WeiXinOauthController extends ApiController {
 
     public void index(){
         String appId= ApiConfigKit.getApiConfig().getAppId();
-        String secret=ApiConfigKit.getApiConfig().getAppSecret();
         String redirect_uri = getBaseUrl(getRequest())
                 + "/oauth/callback";
         try {
@@ -72,7 +69,8 @@ public class WeiXinOauthController extends ApiController {
             }
 
             setSessionAttr("openId", openId);
-            if (subscribe==0) {
+//            subscribe为1表示已经订阅
+            if (subscribe==1) {
                 render("index.html");
 //                renderText("设置成功");
             }else {

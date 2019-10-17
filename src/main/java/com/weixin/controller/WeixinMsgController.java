@@ -20,7 +20,6 @@ public class WeixinMsgController extends MsgControllerAdapter {
     @Before(MsgInterceptor.class)
     public void index() {
         super.index();
-        renderNull();
         return;
     }
 
